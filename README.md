@@ -1,7 +1,7 @@
 # Nova Dashboard Front End
 
-This is the main frontend repository for the software part of a P3 project created by SW3 group 6 at Aalborg University
-Copenhagen.
+This is the main frontend repository for the software part of a P3 project created by SW3 group 6 at
+Aalborg University in Copenhagen.
 
 ## Local Development
 
@@ -21,8 +21,8 @@ Then, start a new shell session in the `node` container:
 docker exec -it nova-dashboard-front-end-node-1 /bin/sh
 ```
 
-The first time the project is cloned, or when dependencies in [`package.json`](./package.json)
-or [`package-lock.json`](./package-lock.json) have changed, in the `node` container run:
+The first time the project is cloned, or when dependencies in [`package.json`](./package.json) or
+[`package-lock.json`](./package-lock.json) have changed, in the `node` container run:
 
 ```shell
 npm install
@@ -37,9 +37,10 @@ npm run dev
 The front end is now accessible at [localhost:3000](http://localhost:3000/).
 
 When code is pushed to the remote repository, the
-[Formatting And Linting](./.github/workflows/formatting-and-linting.yml) workflow is run.
-Therefore, check your code for errors before committing and pushing by running the tools in the `node` container
-first:
+[Formatting, Linting and Build](./.github/workflows/formatting-linting-and-build.yml) workflow is
+run.
+Therefore, check your code for errors before committing and pushing by running the tools in the
+`node` container first:
 
 ```shell
 npm run prettier && npx eslint .
