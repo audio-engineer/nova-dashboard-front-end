@@ -2,12 +2,12 @@ services:
   node:
     image: node:22-alpine
     user: node
-    working_dir: /home/node/$COMPOSE_PROJECT_NAME
+    working_dir: /home/node/${COMPOSE_PROJECT_NAME}
     environment:
       - NODE_ENV=development
     tty: true
     volumes:
-      - ./:/home/node/$COMPOSE_PROJECT_NAME
+      - ./:/home/node/${COMPOSE_PROJECT_NAME}
     ports:
       - "3000:3000"
       - "9229:9229"
