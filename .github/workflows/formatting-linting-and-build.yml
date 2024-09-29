@@ -1,8 +1,8 @@
-name: Formatting And Linting
+name: Formatting, Linting and Build
 on: pull_request
 jobs:
-  formatting-and-linting:
-    name: Formatting And Linting
+  formatting-linting-and-build:
+    name: Formatting, Linting and Build
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -24,3 +24,5 @@ jobs:
           report-json: "eslint-report.json"
       - name: Run Prettier
         run: npm run prettier
+      - name: Build
+        run: NODE_ENV=production npm run build
