@@ -4,7 +4,6 @@ import Typography from "@mui/material/Typography";
 import IconButton from "@mui/material/IconButton";
 import { useColorScheme } from "@mui/material/styles";
 import type { FC, ReactElement } from "react";
-import { useEffect, useState } from "react";
 import BrightnessHigh from "@mui/icons-material/BrightnessHigh";
 import Brightness4Icon from "@mui/icons-material/Brightness4";
 import SettingsBrightnessIcon from "@mui/icons-material/SettingsBrightness";
@@ -36,13 +35,8 @@ const BrightnessIcon = ({
 
 const ColorMode: FC = (): ReactElement | null => {
   const { mode, setMode } = useColorScheme();
-  const [isMounted, setIsMounted] = useState(false);
 
-  useEffect(() => {
-    setIsMounted(true);
-  }, []);
-
-  if (!isMounted) {
+  if (!mode) {
     return null;
   }
 
