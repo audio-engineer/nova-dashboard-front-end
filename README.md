@@ -5,6 +5,9 @@ Aalborg University in Copenhagen.
 
 ## Local Development
 
+Copy [`.env.sample`](./.env.sample) into `.env` and fill out the values for the environment
+variables in the `.env` file.
+
 ### Running the local development environment
 
 To start the Docker Compose project, run:
