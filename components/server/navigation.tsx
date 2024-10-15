@@ -1,20 +1,20 @@
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
-import Button from "@mui/material/Button";
-import ToolbarDisplay from "@/components/server/toolbar-display";
 import AppBar from "@mui/material/AppBar";
-import type { FC, ReactElement } from "react";
+import type { ReactElement } from "react";
 import ColorMode from "@/components/client/color-mode";
+import LogoutButton from "@/components/client/logout-button";
+import UploadButton from "@/components/client/upload-button";
 
-const Navigation: FC = (): ReactElement | null => {
+const Navigation = (): ReactElement | null => {
   return (
     <AppBar position="static">
       <Toolbar>
         <Typography
           variant="h5"
           component="a"
-          href="/"
+          href="/dashboard"
           sx={{
             mr: "1.5rem",
             color: "inherit",
@@ -24,11 +24,7 @@ const Navigation: FC = (): ReactElement | null => {
           Nova Dashboard
         </Typography>
         <Box flexGrow="1" />
-        <Box>
-          <Button color="inherit" href="/about">
-            About
-          </Button>
-        </Box>
+        <UploadButton />
         <Box
           display="flex"
           alignItems="center"
@@ -37,7 +33,7 @@ const Navigation: FC = (): ReactElement | null => {
         >
           <ColorMode />
         </Box>
-        <ToolbarDisplay />
+        <LogoutButton />
       </Toolbar>
     </AppBar>
   );
