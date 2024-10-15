@@ -1,7 +1,8 @@
-import type { FC, ReactElement } from "react";
+import type { ReactElement } from "react";
+import LoginPage from "@/components/server/login-page";
 
-const Home: FC = (): ReactElement | null => {
-  return <div>Hello, world!</div>;
+const Login = (): ReactElement | null => {
+  return <LoginPage />;
 };
 
-export default Home;
+export default Login;

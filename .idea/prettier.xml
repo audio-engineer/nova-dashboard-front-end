@@ -2,6 +2,6 @@
 <project version="4">
   <component name="PrettierConfiguration">
     <option name="myConfigurationMode" value="AUTOMATIC" />
-    <option name="myFilesPattern" value="**/*.{js,cjs,mjs,jsx,ts,tsx,json,html,css,md,yaml}" />
+    <option name="myFilesPattern" value="**/*.{js,ts,tsx,json,md,yaml}" />
   </component>
 </project>

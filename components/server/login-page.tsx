@@ -1,29 +1,27 @@
-import type { PropsWithChildren, ReactElement } from "react";
+import type { ReactElement } from "react";
+import LoginButton from "@/components/client/login-button";
 import Box from "@mui/material/Box";
 import Container from "@mui/material/Container";
-import Navigation from "@/components/server/navigation";
 
-const MainContainer = ({
-  children,
-}: Readonly<PropsWithChildren>): ReactElement | null => {
+const LoginPage = (): ReactElement | null => {
   return (
     <Box>
-      <Navigation />
       <Box
         component="main"
         display="flex"
         height="calc(100vh - 64px)"
         maxHeight="1200px"
       >
-        <Container maxWidth="lg">
+        <Container maxWidth="sm">
           <Box
             display="flex"
             flexDirection="column"
+            justifyContent="center"
             width="100%"
             height="100%"
             sx={{ py: 2 }}
           >
-            {children}
+            <LoginButton />
           </Box>
         </Container>
       </Box>
@@ -31,4 +29,4 @@ const MainContainer = ({
   );
 };
 
-export default MainContainer;
+export default LoginPage;
