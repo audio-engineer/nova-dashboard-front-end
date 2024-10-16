@@ -5,7 +5,7 @@ import AppBar from "@mui/material/AppBar";
 import type { ReactElement } from "react";
 import ColorMode from "@/components/client/color-mode";
 import LogoutButton from "@/components/server/logout-button";
-import UploadButton from "@/components/client/upload-button";
+import CsvUploadButton from "@/components/client/csv-upload-button";
 
 const Navigation = (): ReactElement | null => {
   return (
@@ -24,7 +24,16 @@ const Navigation = (): ReactElement | null => {
           Nova Dashboard
         </Typography>
         <Box flexGrow="1" />
-        <UploadButton />
+        <CsvUploadButton
+          endpointPath={`${process.env.NEXT_PUBLIC_BACKEND_API_HOST}/api/orders`}
+        >
+          Upload Orders
+        </CsvUploadButton>
+        <CsvUploadButton
+          endpointPath={`${process.env.NEXT_PUBLIC_BACKEND_API_HOST}/api/order-lines`}
+        >
+          Upload Order-lines
+        </CsvUploadButton>
         <Box
           display="flex"
           alignItems="center"
