@@ -5,7 +5,7 @@ Aalborg University in Copenhagen.
 
 ## Local Development
 
-Copy [`.env.local.sample`](./.env.local.sample) into `.env.local` and fill out the values for the 
+Copy [`.env.local.sample`](./.env.local.sample) into `.env.local` and fill out the values for the
 environment variables in the `.env.local` file.
 
 ### Running the local development environment

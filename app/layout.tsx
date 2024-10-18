@@ -7,6 +7,7 @@ import { ThemeProvider } from "@mui/material/styles";
 import { theme } from "@/app/theme";
 import InitColorSchemeScript from "@mui/material/InitColorSchemeScript";
 import Providers from "@/components/client/providers";
+import MainContainer from "@/components/server/main-container";
 
 export const metadata: Metadata = {
   title: "Nova Dashboard",
@@ -23,7 +24,9 @@ const RootLayout = ({
         <AppRouterCacheProvider>
           <ThemeProvider theme={theme}>
             <CssBaseline />
-            <Providers>{children}</Providers>
+            <Providers>
+              <MainContainer>{children}</MainContainer>
+            </Providers>
           </ThemeProvider>
         </AppRouterCacheProvider>
         <SpeedInsights />
