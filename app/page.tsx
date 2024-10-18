@@ -1,8 +1,21 @@
 import type { ReactElement } from "react";
-import LoginPage from "@/components/server/login-page";
+import { auth } from "@/auth";
+import OrderGrid from "@/components/client/order-grid";
+import Spinner from "@/components/client/spinner";
 
-const Login = (): ReactElement | null => {
-  return <LoginPage />;
+const Dashboard = async (): Promise<ReactElement | null> => {
+  const session = await auth();
+
+  if (undefined === session?.user) {
+    return <Spinner />;
+  }
+
+  return (
+    <>
+      <div>Hello, {session.user.email}!</div>
+      <OrderGrid />
+    </>
+  );
 };
 
-export default Login;
+export default Dashboard;
