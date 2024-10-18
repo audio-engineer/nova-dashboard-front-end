@@ -4,7 +4,7 @@ import Box from "@mui/material/Box";
 import AppBar from "@mui/material/AppBar";
 import type { ReactElement } from "react";
 import ColorMode from "@/components/client/color-mode";
-import LogoutButton from "@/components/client/logout-button";
+import LogoutButton from "@/components/server/logout-button";
 import UploadButton from "@/components/client/upload-button";
 
 const Navigation = (): ReactElement | null => {
@@ -14,7 +14,7 @@ const Navigation = (): ReactElement | null => {
         <Typography
           variant="h5"
           component="a"
-          href="/dashboard"
+          href="/"
           sx={{
             mr: "1.5rem",
             color: "inherit",

@@ -51,9 +51,6 @@
     <inspection_tool class="AssignmentToNull" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="AssignmentToStaticFieldFromInstanceMethod" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="AssignmentToSuperclassField" enabled="true" level="WARNING" enabled_by_default="true" />
-    <inspection_tool class="AutoBoxing" enabled="true" level="WARNING" enabled_by_default="true">
-      <option name="ignoreAddedToCollection" value="false" />
-    </inspection_tool>
     <inspection_tool class="AutoUnboxing" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="AwaitNotInLoop" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="AwaitWithoutCorrespondingSignal" enabled="true" level="WARNING" enabled_by_default="true" />
@@ -280,6 +277,9 @@
     <inspection_tool class="ExternalizableWithSerializationMethods" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="FallthruInSwitchStatement" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="FeatureEnvy" enabled="true" level="WARNING" enabled_by_default="true">
+      <scope name="Tests" level="WARNING" enabled="false">
+        <option name="ignoreTestCases" value="false" />
+      </scope>
       <option name="ignoreTestCases" value="false" />
     </inspection_tool>
     <inspection_tool class="FieldAccessNotGuarded" enabled="true" level="WARNING" enabled_by_default="true" />
@@ -484,7 +484,6 @@
     <inspection_tool class="InstanceofThis" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="IntLiteralMayBeLongLiteral" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="InterfaceMayBeAnnotatedFunctional" enabled="true" level="WARNING" enabled_by_default="true" />
-    <inspection_tool class="InterfaceWithOnlyOneDirectInheritor" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="IteratorNextDoesNotThrowNoSuchElementException" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="JDBCExecuteWithNonConstantString" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="JDBCPrepareStatementWithNonConstantString" enabled="true" level="WARNING" enabled_by_default="true" />
@@ -541,6 +540,7 @@
     <inspection_tool class="MagicNumber" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="MagicNumberJS" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="MapReplaceableByEnumMap" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="MarkdownDocumentationCommentsMigration" enabled="true" level="WARNING" enabled_by_default="true" editorAttributes="WARNING_ATTRIBUTES" />
     <inspection_tool class="MarkerInterface" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="MavenCoroutinesDeprecation" enabled="true" level="ERROR" enabled_by_default="true" />
     <inspection_tool class="MethodCallInLoopCondition" enabled="true" level="WARNING" enabled_by_default="true" />

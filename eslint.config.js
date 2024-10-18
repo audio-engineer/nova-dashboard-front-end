@@ -54,6 +54,11 @@ export default tseslint.config(
               from: "lib",
               name: ["Request"],
             },
+            {
+              from: "package",
+              package: "next-auth",
+              name: ["NextAuthRequest"],
+            },
           ],
         },
       ],
