@@ -1,6 +1,7 @@
 import type { ReactElement } from "react";
 import { auth } from "@/auth";
 import OrderGrid from "@/components/client/order-grid";
+import Heatmap from "@/components/client/heatmap";
 import Spinner from "@/components/client/spinner";
 
 const Dashboard = async (): Promise<ReactElement | null> => {
@@ -14,6 +15,7 @@ const Dashboard = async (): Promise<ReactElement | null> => {
     <>
       <div>Hello, {session.user.email}!</div>
       <OrderGrid />
+      <Heatmap />
     </>
   );
 };
