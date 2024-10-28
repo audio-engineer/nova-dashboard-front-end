@@ -5,10 +5,9 @@ import type { ChangeEvent, PropsWithChildren, ReactElement } from "react";
 import { useRef, useEffect, useState } from "react";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import { styled } from "@mui/material/styles";
-import Snackbar from "@mui/material/Snackbar";
-import Alert from "@mui/material/Alert";
 import { useSession } from "next-auth/react";
 import Spinner from "@/components/client/spinner";
+import { useNotification } from "@/components/client/notification-context";
 
 const VisuallyHiddenInput = styled("input")({
   clip: "rect(0 0 0 0)",
@@ -22,60 +21,60 @@ const VisuallyHiddenInput = styled("input")({
   width: 1,
 });
 
+interface ErrorResponse {
+  message?: string;
+}
+
 interface UploadButtonProps {
   endpointPath: string;
+  fileName: string;
 }
 
 const CsvUploadButton = ({
+  fileName,
   endpointPath,
   children,
 }: Readonly<PropsWithChildren<UploadButtonProps>>): ReactElement | null => {
-  const [notificationMessage, setNotificationMessage] = useState<string>("");
-  const [isUploadFail, setIsUploadFail] = useState<boolean>(false);
-  const [isUploadSuccess, setIsUploadSuccess] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const firstElement = 0;
   const session = useSession();
   const token = session.data?.user?.accessToken;
+  const { addNotification } = useNotification();
 
-  // eslint-disable-next-line @typescript-eslint/prefer-readonly-parameter-types
-  const isInputValid = (files: Readonly<FileList> | null): boolean => {
+  const initialInputValidation = (
+    // eslint-disable-next-line @typescript-eslint/prefer-readonly-parameter-types
+    userInput: Readonly<FileList | null>,
+  ): string => {
     const lengthEmpty = 0;
-    if (!files || lengthEmpty === files.length) {
-      setNotificationMessage("No data selected. Please choose a CSV file");
-      return false;
+    if (!userInput || lengthEmpty === userInput.length) {
+      return "No data selected. Please choose a CSV file.";
     }
 
     const lengthOfOne = 1;
-    if (lengthOfOne < files.length) {
-      setNotificationMessage(
-        "Too many files selected. Please choose at most one CSV file.",
-      );
-      return false;
+    if (lengthOfOne < userInput.length) {
+      return "Too many files selected. Please choose at most one CSV file.";
     }
 
     if (
-      "text/csv" !== files[firstElement].type ||
-      !files[firstElement].name.endsWith(".csv")
+      "text/csv" !== userInput[firstElement].type ||
+      !userInput[firstElement].name.endsWith(".csv")
     ) {
-      setNotificationMessage(
-        "File selected is not a valid CSV file. Please select a valid CSV file.",
-      );
-      return false;
+      return "File selected is not a valid CSV file. Please select a valid CSV file.";
     }
 
-    return true;
+    return "";
   };
 
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>): void => {
     const { files } = e.target;
+    const errorMessage = initialInputValidation(files);
 
-    if (isInputValid(files) && files) {
+    if ("" === errorMessage && files) {
       setSelectedFile(files[firstElement]);
     } else {
-      setIsUploadFail(true);
+      addNotification(errorMessage, "error");
     }
 
     if (fileInputRef.current) {
@@ -88,75 +87,68 @@ const CsvUploadButton = ({
       if (!selectedFile) {
         return;
       }
-      console.log(selectedFile);
-
-      setIsLoading(true);
 
       const formData = new FormData();
-      formData.append("csv-file", selectedFile);
+      formData.append(fileName, selectedFile);
 
-      const response = await fetch(endpointPath, {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-        body: formData,
-      });
+      addNotification("File is being processed", "info");
+      setIsLoading(true);
 
-      setNotificationMessage(await response.text());
-      if (!response.ok) {
-        setIsUploadFail(true);
-      } else {
-        setIsUploadSuccess(true);
+      try {
+        const response = await fetch(endpointPath, {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          body: formData,
+        });
+
+        if (!response.ok) {
+          const errorResponse = (await response.json()) as ErrorResponse;
+          const notificationMessage =
+            errorResponse.message ?? "An error occurred";
+          addNotification(notificationMessage, "error");
+        } else {
+          const notificationMessage = await response.text();
+          addNotification(notificationMessage, "success");
+        }
+      } catch (error) {
+        if (error instanceof TypeError) {
+          addNotification(
+            "Failed to connect to the backend. Please make sure the backend is running.",
+            "error",
+          );
+        } else {
+          addNotification(
+            "An unexpected error occurred during upload.",
+            "error",
+          );
+        }
+      } finally {
+        setIsLoading(false);
+        setSelectedFile(null);
       }
-      setIsLoading(false);
-      setSelectedFile(null);
     };
 
     void uploadFiles();
-  }, [endpointPath, selectedFile, token]);
-
-  const handleCloseSnackbar = (): void => {
-    setNotificationMessage("");
-    setIsUploadSuccess(false);
-    setIsUploadFail(false);
-  };
+  }, [addNotification, endpointPath, fileName, selectedFile, token]);
 
   return (
-    <>
-      {!isLoading && (
-        <Button
-          component="label"
-          role={undefined}
-          variant="contained"
-          tabIndex={-1}
-          startIcon={<CloudUploadIcon />}
-          disabled={isLoading}
-        >
-          {children}
-          <VisuallyHiddenInput
-            type="file"
-            onChange={handleInputChange}
-            ref={fileInputRef}
-          />
-        </Button>
-      )}
-      {isLoading && <Spinner />}
-      <Snackbar
-        open={isUploadFail || isUploadSuccess}
-        autoHideDuration={6000}
-        onClose={handleCloseSnackbar}
-      >
-        <Alert
-          onClose={handleCloseSnackbar}
-          severity={
-            isUploadSuccess ? "success" : isUploadFail ? "error" : "info"
-          }
-        >
-          {notificationMessage}
-        </Alert>
-      </Snackbar>
-    </>
+    <Button
+      component="label"
+      role={undefined}
+      variant="contained"
+      tabIndex={-1}
+      startIcon={isLoading ? <Spinner /> : <CloudUploadIcon />}
+      disabled={isLoading}
+    >
+      {children}
+      <VisuallyHiddenInput
+        type="file"
+        onChange={handleInputChange}
+        ref={fileInputRef}
+      />
+    </Button>
   );
 };
 
