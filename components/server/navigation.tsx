@@ -26,11 +26,13 @@ const Navigation = (): ReactElement | null => {
         <Box flexGrow="1" />
         <CsvUploadButton
           endpointPath={`${process.env.NEXT_PUBLIC_BACKEND_API_HOST}/api/orders`}
+          fileName={"orders"}
         >
           Upload Orders
         </CsvUploadButton>
         <CsvUploadButton
           endpointPath={`${process.env.NEXT_PUBLIC_BACKEND_API_HOST}/api/order-lines`}
+          fileName={"order-lines"}
         >
           Upload Order-lines
         </CsvUploadButton>
