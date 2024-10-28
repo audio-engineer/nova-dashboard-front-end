@@ -24,15 +24,18 @@ const VisuallyHiddenInput = styled("input")({
 
 interface UploadButtonProps {
   endpointPath: string;
+  fileName: string;
 }
 
 const CsvUploadButton = ({
+  fileName,
   endpointPath,
   children,
 }: Readonly<PropsWithChildren<UploadButtonProps>>): ReactElement | null => {
   const [notificationMessage, setNotificationMessage] = useState<string>("");
   const [isUploadFail, setIsUploadFail] = useState<boolean>(false);
   const [isUploadSuccess, setIsUploadSuccess] = useState<boolean>(false);
+  const [isUploadStarted, setIsUploadStarted] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
@@ -88,12 +91,13 @@ const CsvUploadButton = ({
       if (!selectedFile) {
         return;
       }
-      console.log(selectedFile);
 
+      setNotificationMessage("File is being processed");
+      setIsUploadStarted(true);
       setIsLoading(true);
 
       const formData = new FormData();
-      formData.append("csv-file", selectedFile);
+      formData.append(fileName, selectedFile);
 
       const response = await fetch(endpointPath, {
         method: "POST",
@@ -103,7 +107,12 @@ const CsvUploadButton = ({
         body: formData,
       });
 
-      setNotificationMessage(await response.text());
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+      const data = await response.json();
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+      const { message } = data;
+      setNotificationMessage(message as string);
+
       if (!response.ok) {
         setIsUploadFail(true);
       } else {
@@ -114,12 +123,13 @@ const CsvUploadButton = ({
     };
 
     void uploadFiles();
-  }, [endpointPath, selectedFile, token]);
+  }, [endpointPath, fileName, selectedFile, token]);
 
   const handleCloseSnackbar = (): void => {
     setNotificationMessage("");
     setIsUploadSuccess(false);
     setIsUploadFail(false);
+    setIsUploadStarted(false);
   };
 
   return (
@@ -141,9 +151,9 @@ const CsvUploadButton = ({
           />
         </Button>
       )}
-      {isLoading && <Spinner />}
+      {isLoading && <Spinner invertedColor={true} />}
       <Snackbar
-        open={isUploadFail || isUploadSuccess}
+        open={isUploadFail || isUploadSuccess || isUploadStarted}
         autoHideDuration={6000}
         onClose={handleCloseSnackbar}
       >

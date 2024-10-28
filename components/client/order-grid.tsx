@@ -37,7 +37,7 @@ const OrderGrid = (): ReactElement | null => {
   });
 
   if (isLoading) {
-    return <Spinner />;
+    return <Spinner invertedColor={false} />;
   }
 
   return <div>{JSON.stringify(data)}</div>;
