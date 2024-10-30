@@ -32,23 +32,23 @@ const tempData = [
         y: 6,
       },
       {
-        x: "12 am",
+        x: "12 pm",
         y: 5,
       },
       {
-        x: "13 am",
+        x: "13 pm",
         y: 0,
       },
       {
-        x: "14 am",
+        x: "14 pm",
         y: 1,
       },
       {
-        x: "15 am",
+        x: "15 pm",
         y: 0,
       },
       {
-        x: "16 am",
+        x: "16 pm",
         y: 0,
       },
     ],
@@ -81,23 +81,23 @@ const tempData = [
         y: 2,
       },
       {
-        x: "12 am",
+        x: "12 pm",
         y: 1,
       },
       {
-        x: "13 am",
+        x: "13 pm",
         y: 0,
       },
       {
-        x: "14 am",
+        x: "14 pm",
         y: 0,
       },
       {
-        x: "15 am",
+        x: "15 pm",
         y: 0,
       },
       {
-        x: "16 am",
+        x: "16 pm",
         y: 0,
       },
     ],
@@ -130,23 +130,23 @@ const tempData = [
         y: 1,
       },
       {
-        x: "12 am",
+        x: "12 pm",
         y: 1,
       },
       {
-        x: "13 am",
+        x: "13 pm",
         y: 0,
       },
       {
-        x: "14 am",
+        x: "14 pm",
         y: 2,
       },
       {
-        x: "15 am",
+        x: "15 pm",
         y: 0,
       },
       {
-        x: "16 am",
+        x: "16 pm",
         y: 0,
       },
     ],
@@ -179,23 +179,23 @@ const tempData = [
         y: 2,
       },
       {
-        x: "12 am",
+        x: "12 pm",
         y: 1,
       },
       {
-        x: "13 am",
+        x: "13 pm",
         y: 0,
       },
       {
-        x: "14 am",
+        x: "14 pm",
         y: 0,
       },
       {
-        x: "15 am",
+        x: "15 pm",
         y: 1,
       },
       {
-        x: "16 am",
+        x: "16 pm",
         y: 0,
       },
     ],
@@ -228,23 +228,23 @@ const tempData = [
         y: 0,
       },
       {
-        x: "12 am",
+        x: "12 pm",
         y: 2,
       },
       {
-        x: "13 am",
+        x: "13 pm",
         y: 0,
       },
       {
-        x: "14 am",
+        x: "14 pm",
         y: 1,
       },
       {
-        x: "15 am",
+        x: "15 pm",
         y: 2,
       },
       {
-        x: "16 am",
+        x: "16 pm",
         y: 1,
       },
     ],
@@ -277,23 +277,23 @@ const tempData = [
         y: 4,
       },
       {
-        x: "12 am",
+        x: "12 pm",
         y: 5,
       },
       {
-        x: "13 am",
+        x: "13 pm",
         y: 2,
       },
       {
-        x: "14 am",
+        x: "14 pm",
         y: 1,
       },
       {
-        x: "15 am",
+        x: "15 pm",
         y: 0,
       },
       {
-        x: "16 am",
+        x: "16 pm",
         y: 0,
       },
     ],
@@ -326,23 +326,23 @@ const tempData = [
         y: 7,
       },
       {
-        x: "12 am",
+        x: "12 pm",
         y: 3,
       },
       {
-        x: "13 am",
+        x: "13 pm",
         y: 0,
       },
       {
-        x: "14 am",
+        x: "14 pm",
         y: 2,
       },
       {
-        x: "15 am",
+        x: "15 pm",
         y: 0,
       },
       {
-        x: "16 am",
+        x: "16 pm",
         y: 0,
       },
     ],
@@ -354,7 +354,7 @@ const Heatmap = (): ReactElement => {
     <ResponsiveHeatMap
       data={tempData}
       margin={{ top: 60, right: 90, bottom: 60, left: 90 }}
-      forceSquare={true}
+      forceSquare={false}
       xInnerPadding={0.05}
       yInnerPadding={0.05}
       borderRadius={6}
@@ -399,8 +399,7 @@ const Heatmap = (): ReactElement => {
             }}
           >
             <div>
-              {cell.formattedValue} customer(s) on {cell.serieId}s at{" "}
-              {cell.data.x}
+              {cell.formattedValue} sale(s) on {cell.serieId}s at {cell.data.x}
             </div>
           </div>
         );
