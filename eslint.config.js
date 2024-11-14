@@ -42,22 +42,22 @@ export default tseslint.config(
             },
             {
               from: "package",
-              package: "next",
-              name: ["NextRequest"],
-            },
-            {
-              from: "package",
               package: "react",
-              name: ["ChangeEvent", "MouseEvent", "ReactNode"],
+              name: ["ChangeEvent", "ReactNode"],
             },
             {
               from: "lib",
-              name: ["Request"],
+              name: ["Request", "FileList"],
             },
             {
               from: "package",
-              package: "next-auth",
-              name: ["NextAuthRequest"],
+              package: "mui/material",
+              name: ["SelectChangeEvent"],
+            },
+            {
+              from: "package",
+              package: "@nivo/heatmap",
+              name: ["TooltipProps"],
             },
           ],
         },
@@ -66,12 +66,6 @@ export default tseslint.config(
         "error",
         {
           patterns: ["@mui/*/*/*"],
-        },
-      ],
-      "@typescript-eslint/no-magic-numbers": [
-        "error",
-        {
-          ignoreEnums: true,
         },
       ],
     },
