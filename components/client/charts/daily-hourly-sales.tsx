@@ -13,6 +13,7 @@ import { useDateRange } from "@/hooks/use-date-range";
 import { useQuery } from "@tanstack/react-query";
 import Spinner from "@/components/client/spinner";
 import { getLocalizedDate, getLocalizedTime } from "@/utils/date-time";
+import dayjs from "dayjs";
 
 const getDailyHourlySales = async (
   formattedDateRange: FormattedDateRange,
@@ -27,41 +28,66 @@ const getDailyHourlySales = async (
 };
 
 const transformToHeatmapData = (
-  response: PaginatedResponse<EmbeddedDailyHourlySales> | undefined,
-): HeatMapSerie<HeatMapDatum, object>[] | undefined => {
-  if (undefined === response?._embedded) {
-    return undefined;
-  }
-
-  return response._embedded.dailyHourlySalesDtoes.map((day) => ({
-    id: getLocalizedDate(day.date),
-    data: day.hourlySales.map((hourly) => ({
+  response: PaginatedResponse<EmbeddedDailyHourlySales>,
+): HeatMapSerie<HeatMapDatum, object>[] => {
+  const array = response._embedded.dailyHourlySalesDtoes.map((day) => {
+    const data = day.hourlySales.map((hourly) => ({
       x: getLocalizedTime(hourly.hour),
       y: hourly.totalSales,
-    })),
-  }));
+    }));
+
+    data.sort(
+      (
+        firstElement: Readonly<HeatMapDatum>,
+        secondElement: Readonly<HeatMapDatum>,
+      ) => {
+        return (
+          dayjs(firstElement.x, "HH:mm").unix() -
+          dayjs(secondElement.x, "HH:mm").unix()
+        );
+      },
+    );
+
+    console.log(data);
+
+    return {
+      id: getLocalizedDate(day.date),
+      data,
+    };
+  });
+
+  array.sort(
+    (
+      firstElement: HeatMapSerie<HeatMapDatum, object>,
+      secondElement: HeatMapSerie<HeatMapDatum, object>,
+    ) => {
+      return (
+        dayjs(firstElement.id, "DD.MM.YYYY").unix() -
+        dayjs(secondElement.id, "DD.MM.YYYY").unix()
+      );
+    },
+  );
+
+  return array;
 };
 
-const DailyHourlySalesChart = (): ReactElement => {
+const DailyHourlySales = (): ReactElement => {
   const { formattedDateRange } = useDateRange();
 
-  const { isLoading, data } = useQuery({
+  const { data } = useQuery({
     queryKey: ["dailyHourlySales", formattedDateRange],
     queryFn: async () => getDailyHourlySales(formattedDateRange),
     enabled: null !== formattedDateRange.from || null !== formattedDateRange.to,
+    select: transformToHeatmapData,
   });
 
-  if (null === formattedDateRange.from || null === formattedDateRange.to) {
-    return <div>Select a date range</div>;
-  }
-
-  if (isLoading) {
+  if (undefined === data) {
     return <Spinner />;
   }
 
   return (
     <ResponsiveHeatMap
-      data={transformToHeatmapData(data) ?? []}
+      data={data}
       margin={{ top: 60, right: 90, bottom: 60, left: 90 }}
       forceSquare={false}
       xInnerPadding={0.05}
@@ -116,4 +142,4 @@ const DailyHourlySalesChart = (): ReactElement => {
   );
 };
 
-export default DailyHourlySalesChart;
+export default DailyHourlySales;

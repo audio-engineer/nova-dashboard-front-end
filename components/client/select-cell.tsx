@@ -6,7 +6,7 @@ import type { SelectChangeEvent } from "@mui/material/Select";
 import Select from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
 import type { GridRenderCellParams } from "@mui/x-data-grid";
-import type { ProductRow } from "@/components/client/product-grid";
+import type { ProductRow } from "@/components/client/grids/product";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { client } from "@/axios";
 import { getIdFromHref } from "@/utils/url";
@@ -43,7 +43,9 @@ const SelectCell = ({ params }: SelectCellProps): ReactElement => {
 
   const notifications = useNotifications();
   const queryClient = useQueryClient();
-  const { data: fetchedCategories } = useCategories({ pageSize: 100, page: 0 });
+  const { data: fetchedCategories } = useCategories<
+    PaginatedResponse<EmbeddedCategories>
+  >({ pageSize: 100, page: 0 });
   const { onErrorHandler } = useMutationQueryOnErrorHandler();
 
   const cachedCategories = queryClient.getQueryData<

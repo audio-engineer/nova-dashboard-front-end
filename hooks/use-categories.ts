@@ -16,10 +16,12 @@ const getCategories = async (
   return response.data;
 };
 
-export const useCategories = (
+export const useCategories = <T>(
   paginationModel: Readonly<GridPaginationModel>,
-): UseQueryResult<PaginatedResponse<EmbeddedCategories>> =>
+  select?: (data: PaginatedResponse<EmbeddedCategories>) => T,
+): UseQueryResult<T> =>
   useQuery({
     queryKey: ["categories", paginationModel],
     queryFn: async () => getCategories(paginationModel),
+    select,
   });

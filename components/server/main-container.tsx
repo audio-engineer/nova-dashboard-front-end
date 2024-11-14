@@ -2,28 +2,22 @@ import type { PropsWithChildren, ReactElement } from "react";
 import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
 import Container from "@mui/material/Container";
-
-export const drawerWidth = 210;
+import Stack from "@mui/material/Stack";
 
 const MainContainer = ({
   children,
 }: Readonly<PropsWithChildren>): ReactElement => {
   return (
-    <Box display="flex">
+    <Stack>
       <Box component="main" flexGrow="1">
         <Container maxWidth="lg">
-          <Box
-            display="flex"
-            flexDirection="column"
-            width="100%"
-            sx={{ py: 2 }}
-          >
+          <Stack width="100%" sx={{ py: 2 }}>
             <Toolbar />
             {children}
-          </Box>
+          </Stack>
         </Container>
       </Box>
-    </Box>
+    </Stack>
   );
 };
 

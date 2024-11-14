@@ -15,6 +15,7 @@ import { useDateRange } from "@/hooks/use-date-range";
 import type { FormattedDateRange } from "@/contexts/date-range";
 import { useCategories } from "@/hooks/use-categories";
 import { getLocalizedDate } from "@/utils/date-time";
+import dayjs from "dayjs";
 
 const getDailyCategorySales = async (
   formattedDateRange: FormattedDateRange,
@@ -29,13 +30,9 @@ const getDailyCategorySales = async (
 };
 
 const transformApiResponse = (
-  response: PaginatedResponse<EmbeddedDailyCategorySales> | undefined,
-): BarDatum[] | undefined => {
-  if (undefined === response?._embedded) {
-    return undefined;
-  }
-
-  return response._embedded.dailyCategorySalesDtoes.map((dailySales) => {
+  response: PaginatedResponse<EmbeddedDailyCategorySales>,
+): BarDatum[] => {
+  const array = response._embedded.dailyCategorySalesDtoes.map((dailySales) => {
     const barDatum: BarDatum = { day: getLocalizedDate(dailySales.date) };
 
     dailySales.categorySales.forEach((category) => {
@@ -44,50 +41,55 @@ const transformApiResponse = (
 
     return barDatum;
   });
+
+  array.sort(
+    (firstElement: Readonly<BarDatum>, secondElement: Readonly<BarDatum>) => {
+      return (
+        dayjs(secondElement.day, "DD.MM.YYYY").unix() -
+        dayjs(firstElement.day, "DD.MM.YYYY").unix()
+      );
+    },
+  );
+
+  return array;
 };
 
 const transformCategories = (
-  response: PaginatedResponse<EmbeddedCategories> | undefined,
-): string[] | undefined => {
-  if (undefined === response?._embedded) {
-    return undefined;
-  }
-
+  response: PaginatedResponse<EmbeddedCategories>,
+): string[] => {
   return response._embedded.categories.map((category) => category.name);
 };
 
-const DailyCategorySalesChart = (): ReactElement => {
+const DailyCategorySales = (): ReactElement => {
   const { formattedDateRange } = useDateRange();
 
-  const { isLoading, data } = useQuery({
+  const { data } = useQuery({
     queryKey: ["dailyCategorySales", formattedDateRange],
     queryFn: async () => getDailyCategorySales(formattedDateRange),
     enabled: null !== formattedDateRange.from || null !== formattedDateRange.to,
+    select: transformApiResponse,
   });
 
-  const { isLoading: categoryIsLoading, data: categoryData } = useCategories({
-    pageSize: 100,
-    page: 0,
-  });
+  const { isLoading: categoryIsLoading, data: categoryData } = useCategories<
+    string[]
+  >(
+    {
+      pageSize: 100,
+      page: 0,
+    },
+    transformCategories,
+  );
 
-  if (null === formattedDateRange.from || null === formattedDateRange.to) {
-    return <div>Select a date range</div>;
-  }
-
-  if (undefined === data?._embedded) {
-    return <div>Map some categories</div>;
-  }
-
-  if (isLoading || categoryIsLoading) {
+  if (undefined === data || categoryIsLoading) {
     return <Spinner />;
   }
 
   return (
     <ResponsiveBar
-      data={transformApiResponse(data) ?? []}
+      data={data}
       enableTotals={false}
       layout="horizontal"
-      keys={transformCategories(categoryData) ?? []}
+      keys={categoryData}
       indexBy="day"
       margin={{ top: 60, right: 90, bottom: 90, left: 90 }}
       padding={0.3}
@@ -136,4 +138,4 @@ const DailyCategorySalesChart = (): ReactElement => {
   );
 };
 
-export default DailyCategorySalesChart;
+export default DailyCategorySales;

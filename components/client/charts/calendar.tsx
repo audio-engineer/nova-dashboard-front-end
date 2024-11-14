@@ -17,12 +17,8 @@ interface DataEntry {
 }
 
 const transformResponse = (
-  data: PaginatedResponse<EmbeddedTotalDailySales> | undefined,
-): DataEntry[] | undefined => {
-  if (undefined === data?._embedded) {
-    return undefined;
-  }
-
+  data: PaginatedResponse<EmbeddedTotalDailySales>,
+): DataEntry[] => {
   return data._embedded.tupleBackedMaps.map((totalDailySalesProjection) => ({
     day: totalDailySalesProjection.date,
     value: totalDailySalesProjection.totalSales,
@@ -30,18 +26,21 @@ const transformResponse = (
 };
 
 const Calendar = (): ReactElement => {
-  const { isLoading, data } = useTotalDailySales({
-    from: dayjs().startOf("year").format("YYYY-MM-DD"),
-    to: dayjs().format("YYYY-MM-DD"),
-  });
+  const { data } = useTotalDailySales(
+    {
+      from: dayjs().startOf("year").format("YYYY-MM-DD"),
+      to: dayjs().format("YYYY-MM-DD"),
+    },
+    transformResponse,
+  );
 
-  if (isLoading) {
+  if (undefined === data) {
     return <Spinner />;
   }
 
   return (
     <ResponsiveCalendar
-      data={transformResponse(data) ?? []}
+      data={data}
       from="2024-01-07"
       to="2024-07-12"
       emptyColor="#FFFFFF"

@@ -1,6 +1,6 @@
-import CategoryGrid from "@/components/client/category-grid";
+import Category from "@/components/client/grids/category";
 import CsvUploadButton from "@/components/client/csv-upload-button";
-import ProductGrid from "@/components/client/product-grid";
+import Product from "@/components/client/grids/product";
 import type { ReactElement } from "react";
 import Grid from "@mui/material/Grid2";
 import ButtonGroup from "@mui/material/ButtonGroup";
@@ -31,12 +31,12 @@ const SettingsPage = (): ReactElement => {
       <Grid size={{ xs: 12 }}>
         <SectionCard title={"Categories"}>
           <CategoryForm />
-          <CategoryGrid />
+          <Category />
         </SectionCard>
       </Grid>
       <Grid size={{ xs: 12 }}>
         <SectionCard title={"Products"} minHeight={400}>
-          <ProductGrid />
+          <Product />
         </SectionCard>
       </Grid>
     </>

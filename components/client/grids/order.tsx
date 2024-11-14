@@ -7,12 +7,13 @@ import { client } from "@/axios";
 import type { GridColDef, GridPaginationModel } from "@mui/x-data-grid";
 import { DataGrid, GridToolbar } from "@mui/x-data-grid";
 import type { EmbeddedOrders, PaginatedResponse } from "@/types/response";
-import type { Order } from "@/types/entity";
+import type { Order as OrderEntity } from "@/types/entity";
 import { getIdFromHref } from "@/utils/url";
 import { useDateRange } from "@/hooks/use-date-range";
 import type { FormattedDateRange } from "@/contexts/date-range";
+import Spinner from "@/components/client/spinner";
 
-type OrderRow = Order & {
+type OrderRow = OrderEntity & {
   readonly id: string;
 };
 
@@ -20,12 +21,8 @@ const pageSizeTen = 10;
 const pageSizeTwentyFive = 25;
 
 const transformApiResponse = (
-  response: PaginatedResponse<EmbeddedOrders> | undefined,
-): { rows: OrderRow[] | undefined; rowCount: number } => {
-  if (undefined === response) {
-    return { rows: undefined, rowCount: 0 };
-  }
-
+  response: PaginatedResponse<EmbeddedOrders>,
+): { rows: OrderRow[]; rowCount: number } => {
   return {
     rows: response._embedded.orders.map((order) => ({
       id: getIdFromHref(order._links.self.href),
@@ -66,7 +63,7 @@ const columns: GridColDef[] = [
   { field: "isDemo", headerName: "Is Demo" },
 ];
 
-const OrderGrid = (): ReactElement => {
+const Order = (): ReactElement => {
   const { formattedDateRange } = useDateRange();
 
   const [paginationModel, setPaginationModel] = useState({
@@ -77,18 +74,18 @@ const OrderGrid = (): ReactElement => {
   const { isLoading, data } = useQuery({
     queryKey: ["orders", formattedDateRange, paginationModel],
     queryFn: async () => getOrders(formattedDateRange, paginationModel),
+    select: transformApiResponse,
     enabled: null !== formattedDateRange.from || null !== formattedDateRange.to,
   });
 
-  const { rows, rowCount } = transformApiResponse(data);
-
-  console.log(rows);
-  console.log(rowCount);
+  if (undefined === data) {
+    return <Spinner />;
+  }
 
   return (
     <DataGrid
-      rows={rows ?? []}
-      rowCount={rowCount}
+      rows={data.rows}
+      rowCount={data.rowCount}
       columns={columns}
       loading={isLoading}
       paginationMode="server"
@@ -114,4 +111,4 @@ const OrderGrid = (): ReactElement => {
   );
 };
 
-export default OrderGrid;
+export default Order;

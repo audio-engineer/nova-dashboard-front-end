@@ -15,6 +15,7 @@ import type {
   EmbeddedProductsWithCategory,
   PaginatedResponse,
 } from "@/types/response";
+import Spinner from "@/components/client/spinner";
 
 const pageSizeTen = 10;
 const pageSizeTwentyFive = 25;
@@ -67,7 +68,7 @@ const columns: GridColDef[] = [
   },
 ];
 
-const ProductGrid = (): ReactElement => {
+const Product = (): ReactElement => {
   const [paginationModel, setPaginationModel] = useState({
     page: 0,
     pageSize: pageSizeTwentyFive,
@@ -76,14 +77,17 @@ const ProductGrid = (): ReactElement => {
   const { isLoading, data } = useQuery({
     queryKey: ["products", paginationModel],
     queryFn: async () => getProducts(paginationModel),
+    select: transformApiResponse,
   });
 
-  const { rows, rowCount } = transformApiResponse(data);
+  if (undefined === data) {
+    return <Spinner />;
+  }
 
   return (
     <DataGrid
-      rows={rows ?? []}
-      rowCount={rowCount}
+      rows={data.rows}
+      rowCount={data.rowCount}
       columns={columns}
       loading={isLoading}
       paginationMode="server"
@@ -109,4 +113,4 @@ const ProductGrid = (): ReactElement => {
   );
 };
 
-export default ProductGrid;
+export default Product;

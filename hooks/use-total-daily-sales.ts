@@ -12,17 +12,19 @@ const getTotalDailySales = async (
   const { from, to } = formattedDateRange;
 
   const response = await client.get<PaginatedResponse<EmbeddedTotalDailySales>>(
-    `/api/total-daily-sales?startDate=${from}&endDate=${to}`,
+    `/api/total-daily-sales?startDate=${from}&endDate=${to}&size=300`,
   );
 
   return response.data;
 };
 
-export const useTotalDailySales = (
+export const useTotalDailySales = <T>(
   formattedDateRange: FormattedDateRange,
-): UseQueryResult<PaginatedResponse<EmbeddedTotalDailySales>> =>
+  select?: (data: PaginatedResponse<EmbeddedTotalDailySales>) => T,
+): UseQueryResult<T> =>
   useQuery({
     queryKey: ["totalDailySales", formattedDateRange],
     queryFn: async () => getTotalDailySales(formattedDateRange),
     enabled: null !== formattedDateRange.from || null !== formattedDateRange.to,
+    select,
   });

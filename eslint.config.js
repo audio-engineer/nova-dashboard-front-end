@@ -57,7 +57,7 @@ export default tseslint.config(
             {
               from: "package",
               package: "@nivo/heatmap",
-              name: ["TooltipProps"],
+              name: ["TooltipProps", "HeatMapSerie"],
             },
           ],
         },
