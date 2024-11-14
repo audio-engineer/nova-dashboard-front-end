@@ -7,9 +7,9 @@ import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { client } from "@/axios";
-import MutationQueryOnErrorHandler from "@/components/client/mutation-query-on-error-handler";
 import type { Category } from "@/types/entity";
 import { useNotifications } from "@toolpad/core/useNotifications";
+import { useMutationQueryOnErrorHandler } from "@/hooks/use-mutation-query-on-error-handler";
 
 const postCategory = async (name: string): Promise<Category> => {
   const response = await client.post<Category>(
@@ -26,6 +26,7 @@ const postCategory = async (name: string): Promise<Category> => {
 const CategoryForm = (): ReactElement => {
   const notifications = useNotifications();
   const queryClient = useQueryClient();
+  const { onErrorHandler } = useMutationQueryOnErrorHandler();
 
   const [name, setName] = useState("");
 
@@ -39,7 +40,7 @@ const CategoryForm = (): ReactElement => {
         });
       },
       onError: (error: unknown) => {
-        return <MutationQueryOnErrorHandler error={error} />;
+        onErrorHandler(error);
       },
       onSettled: async () => {
         await queryClient.invalidateQueries({ queryKey: ["categories"] });
