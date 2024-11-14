@@ -2,12 +2,20 @@
 
 import Button from "@mui/material/Button";
 import type { ChangeEvent, PropsWithChildren, ReactElement } from "react";
-import { useRef, useEffect, useState } from "react";
+import { useRef, useState } from "react";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import { styled } from "@mui/material/styles";
-import { useSession } from "next-auth/react";
 import Spinner from "@/components/client/spinner";
-import { useNotification } from "@/components/client/notification-context";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { client } from "@/axios";
+import MutationQueryOnErrorHandler from "@/components/client/mutation-query-on-error-handler";
+import { useNotifications } from "@toolpad/core/useNotifications";
+
+type AllowedFileNamePrefix = "orders" | "orderlines";
+
+const firstFileIndex = 0;
+const emptyFileListLength = 0;
+const allowedNumberOfFiles = 1;
 
 const VisuallyHiddenInput = styled("input")({
   clip: "rect(0 0 0 0)",
@@ -21,125 +29,151 @@ const VisuallyHiddenInput = styled("input")({
   width: 1,
 });
 
-interface ErrorResponse {
-  message?: string;
+interface CsvUploadButtonProps {
+  readonly endpointPath: string;
+  readonly allowedFileNamePrefix: AllowedFileNamePrefix;
 }
 
-interface UploadButtonProps {
-  endpointPath: string;
-  fileName: string;
+interface SuccessResponse {
+  readonly message: string;
 }
+
+const postFile = async ({
+  endpointPath,
+  allowedFileNamePrefix,
+  file,
+}: {
+  readonly endpointPath: string;
+  readonly allowedFileNamePrefix: AllowedFileNamePrefix;
+  readonly file: Readonly<File>;
+}): Promise<SuccessResponse> => {
+  const formData = new FormData();
+
+  formData.append(allowedFileNamePrefix, file);
+
+  const response = await client.post<SuccessResponse>(endpointPath, formData);
+
+  return response.data;
+};
+
+const validateFile = (
+  fileNamePrefix: AllowedFileNamePrefix,
+  files: FileList | null,
+): void => {
+  if (!files || emptyFileListLength === files.length) {
+    throw new Error("No file selected. Select a CSV file.");
+  }
+
+  if (allowedNumberOfFiles < files.length) {
+    throw new Error(
+      "Too many files selected. Please choose at most one CSV file.",
+    );
+  }
+
+  // We need to use index access to avoid TypeScript error TS2802
+  // eslint-disable-next-line @typescript-eslint/prefer-destructuring
+  const file = files[firstFileIndex];
+
+  if (!file.name.startsWith(fileNamePrefix)) {
+    throw new Error(
+      `Wrong file selected. Filename should start with "${fileNamePrefix}".`,
+    );
+  }
+
+  if ("text/csv" !== file.type || !file.name.endsWith(".csv")) {
+    throw new Error(
+      "The file selected is not a valid CSV file. Select a valid CSV file.",
+    );
+  }
+};
+
+const StartIcon = (isLoading: boolean): ReactElement => {
+  if (isLoading) {
+    return <Spinner />;
+  }
+
+  return <CloudUploadIcon />;
+};
 
 const CsvUploadButton = ({
-  fileName,
+  allowedFileNamePrefix,
   endpointPath,
   children,
-}: Readonly<PropsWithChildren<UploadButtonProps>>): ReactElement | null => {
+}: Readonly<PropsWithChildren<CsvUploadButtonProps>>): ReactElement => {
+  const queryClient = useQueryClient();
+  const notifications = useNotifications();
+
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
-  const firstElement = 0;
-  const session = useSession();
-  const token = session.data?.user?.accessToken;
-  const { addNotification } = useNotification();
 
-  const initialInputValidation = (
-    // eslint-disable-next-line @typescript-eslint/prefer-readonly-parameter-types
-    userInput: Readonly<FileList | null>,
-  ): string => {
-    const lengthEmpty = 0;
-    if (!userInput || lengthEmpty === userInput.length) {
-      return "No data selected. Please choose a CSV file.";
+  const mutation = useMutation({
+    mutationFn: postFile,
+    onMutate: () => {
+      setIsLoading(true);
+
+      notifications.show("The file is being processed", {
+        severity: "info",
+        autoHideDuration: 3000,
+      });
+    },
+    onSuccess: (data) => {
+      notifications.show(data.message, {
+        severity: "success",
+        autoHideDuration: 3000,
+      });
+    },
+    onError: (error: unknown) => {
+      return (
+        <MutationQueryOnErrorHandler
+          error={error}
+          setIsLoading={setIsLoading}
+        />
+      );
+    },
+    onSettled: async () => {
+      setIsLoading(false);
+
+      await queryClient.invalidateQueries({ queryKey: ["products"] });
+    },
+  });
+
+  const handleInputChange = (event: ChangeEvent<HTMLInputElement>): void => {
+    const { files } = event.target;
+
+    try {
+      validateFile(allowedFileNamePrefix, files);
+    } catch (error) {
+      if (error instanceof Error) {
+        notifications.show(error.message, {
+          severity: "error",
+          autoHideDuration: 3000,
+        });
+
+        return;
+      }
     }
 
-    const lengthOfOne = 1;
-    if (lengthOfOne < userInput.length) {
-      return "Too many files selected. Please choose at most one CSV file.";
+    if (!files) {
+      return;
     }
 
-    if (
-      "text/csv" !== userInput[firstElement].type ||
-      !userInput[firstElement].name.endsWith(".csv")
-    ) {
-      return "File selected is not a valid CSV file. Please select a valid CSV file.";
-    }
-
-    return "";
-  };
-
-  const handleInputChange = (e: ChangeEvent<HTMLInputElement>): void => {
-    const { files } = e.target;
-    const errorMessage = initialInputValidation(files);
-
-    if ("" === errorMessage && files) {
-      setSelectedFile(files[firstElement]);
-    } else {
-      addNotification(errorMessage, "error");
-    }
+    mutation.mutate({
+      endpointPath,
+      allowedFileNamePrefix,
+      file: files[firstFileIndex],
+    });
 
     if (fileInputRef.current) {
       fileInputRef.current.value = "";
     }
   };
 
-  useEffect(() => {
-    const uploadFiles = async (): Promise<void> => {
-      if (!selectedFile) {
-        return;
-      }
-
-      const formData = new FormData();
-      formData.append(fileName, selectedFile);
-
-      addNotification("File is being processed", "info");
-      setIsLoading(true);
-
-      try {
-        const response = await fetch(endpointPath, {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-          body: formData,
-        });
-
-        if (!response.ok) {
-          const errorResponse = (await response.json()) as ErrorResponse;
-          const notificationMessage =
-            errorResponse.message ?? "An error occurred";
-          addNotification(notificationMessage, "error");
-        } else {
-          const notificationMessage = await response.text();
-          addNotification(notificationMessage, "success");
-        }
-      } catch (error) {
-        if (error instanceof TypeError) {
-          addNotification(
-            "Failed to connect to the backend. Please make sure the backend is running.",
-            "error",
-          );
-        } else {
-          addNotification(
-            "An unexpected error occurred during upload.",
-            "error",
-          );
-        }
-      } finally {
-        setIsLoading(false);
-        setSelectedFile(null);
-      }
-    };
-
-    void uploadFiles();
-  }, [addNotification, endpointPath, fileName, selectedFile, token]);
-
   return (
     <Button
       component="label"
       role={undefined}
-      variant="contained"
       tabIndex={-1}
-      startIcon={isLoading ? <Spinner /> : <CloudUploadIcon />}
+      startIcon={StartIcon(isLoading)}
       disabled={isLoading}
     >
       {children}

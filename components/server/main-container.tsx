@@ -1,28 +1,24 @@
 import type { PropsWithChildren, ReactElement } from "react";
 import Box from "@mui/material/Box";
+import Toolbar from "@mui/material/Toolbar";
 import Container from "@mui/material/Container";
-import Navigation from "@/components/server/navigation";
+
+export const drawerWidth = 210;
 
 const MainContainer = ({
   children,
-}: Readonly<PropsWithChildren>): ReactElement | null => {
+}: Readonly<PropsWithChildren>): ReactElement => {
   return (
-    <Box>
-      <Navigation />
-      <Box
-        component="main"
-        display="flex"
-        height="calc(100vh - 64px)"
-        maxHeight="1200px"
-      >
+    <Box display="flex">
+      <Box component="main" flexGrow="1">
         <Container maxWidth="lg">
           <Box
             display="flex"
             flexDirection="column"
             width="100%"
-            height="100%"
             sx={{ py: 2 }}
           >
+            <Toolbar />
             {children}
           </Box>
         </Container>
