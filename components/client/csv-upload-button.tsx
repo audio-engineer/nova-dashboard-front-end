@@ -8,8 +8,8 @@ import { styled } from "@mui/material/styles";
 import Spinner from "@/components/client/spinner";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { client } from "@/axios";
-import MutationQueryOnErrorHandler from "@/components/client/mutation-query-on-error-handler";
 import { useNotifications } from "@toolpad/core/useNotifications";
+import { useMutationQueryOnErrorHandler } from "@/hooks/use-mutation-query-on-error-handler";
 
 type AllowedFileNamePrefix = "orders" | "orderlines";
 
@@ -102,6 +102,7 @@ const CsvUploadButton = ({
 }: Readonly<PropsWithChildren<CsvUploadButtonProps>>): ReactElement => {
   const queryClient = useQueryClient();
   const notifications = useNotifications();
+  const { onErrorHandler } = useMutationQueryOnErrorHandler();
 
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
@@ -123,12 +124,7 @@ const CsvUploadButton = ({
       });
     },
     onError: (error: unknown) => {
-      return (
-        <MutationQueryOnErrorHandler
-          error={error}
-          setIsLoading={setIsLoading}
-        />
-      );
+      onErrorHandler(error, setIsLoading);
     },
     onSettled: async () => {
       setIsLoading(false);

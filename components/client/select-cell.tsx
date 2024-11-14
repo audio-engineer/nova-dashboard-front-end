@@ -8,13 +8,13 @@ import MenuItem from "@mui/material/MenuItem";
 import type { GridRenderCellParams } from "@mui/x-data-grid";
 import type { ProductRow } from "@/components/client/product-grid";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import MutationQueryOnErrorHandler from "@/components/client/mutation-query-on-error-handler";
 import { client } from "@/axios";
 import { getIdFromHref } from "@/utils/url";
 import type { EmbeddedCategories, PaginatedResponse } from "@/types/response";
 import FormControl from "@mui/material/FormControl";
 import { useCategories } from "@/hooks/use-categories";
 import { useNotifications } from "@toolpad/core/useNotifications";
+import { useMutationQueryOnErrorHandler } from "@/hooks/use-mutation-query-on-error-handler";
 
 interface SelectCellProps {
   readonly params: GridRenderCellParams<ProductRow>;
@@ -44,6 +44,7 @@ const SelectCell = ({ params }: SelectCellProps): ReactElement => {
   const notifications = useNotifications();
   const queryClient = useQueryClient();
   const { data: fetchedCategories } = useCategories({ pageSize: 100, page: 0 });
+  const { onErrorHandler } = useMutationQueryOnErrorHandler();
 
   const cachedCategories = queryClient.getQueryData<
     PaginatedResponse<EmbeddedCategories>
@@ -65,7 +66,7 @@ const SelectCell = ({ params }: SelectCellProps): ReactElement => {
       });
     },
     onError: (error: unknown) => {
-      return <MutationQueryOnErrorHandler error={error} />;
+      onErrorHandler(error);
     },
     // onSettled: async () => {
     //   await queryClient.invalidateQueries({ queryKey: ["categories"] });
