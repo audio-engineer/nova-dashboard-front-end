@@ -1,6 +1,6 @@
 import Grid from "@mui/material/Grid2";
 import type { ReactElement } from "react";
-import OrderGrid from "@/components/client/order-grid";
+import Order from "@/components/client/grids/order";
 import SectionCard from "@/components/server/section-card";
 
 const SalesPage = (): ReactElement => {
@@ -8,7 +8,7 @@ const SalesPage = (): ReactElement => {
     <>
       <Grid size={{ xs: 12 }}>
         <SectionCard title={"Orders"}>
-          <OrderGrid />
+          <Order />
         </SectionCard>
       </Grid>
     </>

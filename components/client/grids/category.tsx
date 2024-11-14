@@ -7,6 +7,7 @@ import { useState } from "react";
 import type { EmbeddedCategories, PaginatedResponse } from "@/types/response";
 import { getIdFromHref } from "@/utils/url";
 import { useCategories } from "@/hooks/use-categories";
+import Spinner from "@/components/client/spinner";
 
 const pageSizeTen = 10;
 const pageSizeTwentyFive = 25;
@@ -17,12 +18,8 @@ interface CategoryRow {
 }
 
 const transformApiResponse = (
-  response: PaginatedResponse<EmbeddedCategories> | undefined,
-): { rows: CategoryRow[] | undefined; rowCount: number } => {
-  if (undefined === response?._embedded) {
-    return { rows: undefined, rowCount: 0 };
-  }
-
+  response: PaginatedResponse<EmbeddedCategories>,
+): { rows: CategoryRow[]; rowCount: number } => {
   return {
     rows: response._embedded.categories.map((category) => ({
       id: getIdFromHref(category._links.self.href),
@@ -37,15 +34,20 @@ const columns: GridColDef[] = [
   { field: "name", headerName: "Name", flex: 1, editable: true },
 ];
 
-const CategoryGrid = (): ReactElement => {
+const Category = (): ReactElement => {
   const [paginationModel, setPaginationModel] = useState({
     page: 0,
     pageSize: pageSizeTwentyFive,
   });
 
-  const { isLoading, data } = useCategories(paginationModel);
+  const { isLoading, data } = useCategories<{
+    rows: CategoryRow[];
+    rowCount: number;
+  }>(paginationModel, transformApiResponse);
 
-  const { rows, rowCount } = transformApiResponse(data);
+  if (undefined === data) {
+    return <Spinner />;
+  }
 
   return (
     <DataGrid
@@ -53,8 +55,8 @@ const CategoryGrid = (): ReactElement => {
         display: "grid",
         gridTemplateRows: "auto 1f auto",
       }}
-      rows={rows ?? []}
-      rowCount={rowCount}
+      rows={data.rows}
+      rowCount={data.rowCount}
       columns={columns}
       loading={isLoading}
       paginationMode="server"
@@ -80,4 +82,4 @@ const CategoryGrid = (): ReactElement => {
   );
 };
 
-export default CategoryGrid;
+export default Category;

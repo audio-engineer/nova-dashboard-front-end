@@ -4,11 +4,11 @@ import type { ReactElement } from "react";
 import { useEffect } from "react";
 import { DatePicker } from "@mui/x-date-pickers";
 import { PageContainerToolbar } from "@toolpad/core/PageContainer";
-import Box from "@mui/material/Box";
 import { useDateRange } from "@/hooks/use-date-range";
 import type { Dayjs } from "dayjs";
 import dayjs from "dayjs";
 import { useLocalStorage } from "usehooks-ts";
+import Stack from "@mui/material/Stack";
 
 const Toolbar = (): ReactElement => {
   const { dateRange, setDateRange } = useDateRange();
@@ -48,7 +48,7 @@ const Toolbar = (): ReactElement => {
 
   return (
     <PageContainerToolbar>
-      <Box display="flex" alignItems="center">
+      <Stack flexDirection="row" alignItems="center">
         <DatePicker
           label="From"
           value={dateRange.from}
@@ -59,7 +59,7 @@ const Toolbar = (): ReactElement => {
           value={dateRange.to}
           onAccept={handleToDateChange}
         />
-      </Box>
+      </Stack>
     </PageContainerToolbar>
   );
 };

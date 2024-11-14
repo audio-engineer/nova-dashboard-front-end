@@ -11,37 +11,23 @@ import Spinner from "@/components/client/spinner";
 import { useTotalDailySales } from "@/hooks/use-total-daily-sales";
 
 const transformResponse = (
-  data: PaginatedResponse<EmbeddedTotalDailySales> | undefined,
-): number[] | undefined => {
-  if (undefined === data?._embedded) {
-    return undefined;
-  }
-
+  data: PaginatedResponse<EmbeddedTotalDailySales>,
+): number[] => {
   return data._embedded.tupleBackedMaps.map(
     (totalDailySalesProjection) => totalDailySalesProjection.totalSales,
   );
 };
 
-const TotalDailySalesChart = (): ReactElement => {
+const TotalDailySales = (): ReactElement => {
   const { formattedDateRange } = useDateRange();
 
-  const { isLoading, data } = useTotalDailySales(formattedDateRange);
+  const { data } = useTotalDailySales(formattedDateRange, transformResponse);
 
-  if (null === formattedDateRange.from || null === formattedDateRange.to) {
-    return <div>Select a date range</div>;
-  }
-
-  if (isLoading) {
+  if (undefined === data) {
     return <Spinner />;
   }
 
-  return (
-    <SparkLineChart
-      data={transformResponse(data) ?? []}
-      height={100}
-      colors={["green"]}
-    />
-  );
+  return <SparkLineChart data={data} height={100} colors={["green"]} />;
 };
 
-export default TotalDailySalesChart;
+export default TotalDailySales;

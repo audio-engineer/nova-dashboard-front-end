@@ -1,10 +1,11 @@
-import DailyHourlySalesChart from "@/components/client/daily-hourly-sales-chart";
+import DailyHourlySales from "@/components/client/charts/daily-hourly-sales";
 import type { ReactElement } from "react";
 import Grid from "@mui/material/Grid2";
 import SectionCard from "@/components/server/section-card";
-import Calendar from "@/components/client/calendar";
-import DailyCategorySalesChart from "@/components/client/daily-category-sales-chart";
-import TotalDailySalesChart from "@/components/client/total-daily-sales-chart";
+import Calendar from "@/components/client/charts/calendar";
+import DailyCategorySales from "@/components/client/charts/daily-category-sales";
+import TotalDailySales from "@/components/client/charts/total-daily-sales";
+import TotalSalesNumber from "@/components/client/total-sales-number";
 
 const HomePage = (): ReactElement => {
   return (
@@ -15,10 +16,11 @@ const HomePage = (): ReactElement => {
       <Grid size={{ xs: 6 }}>
         <SectionCard
           title="Total Sales"
-          value={247}
+          value={<TotalSalesNumber />}
           caption="In the selected date range"
+          height={100}
         >
-          <TotalDailySalesChart />
+          <TotalDailySales />
         </SectionCard>
       </Grid>
       <Grid size={{ xs: 12 }}>
@@ -27,7 +29,7 @@ const HomePage = (): ReactElement => {
           caption="In the selected date range"
           height={500}
         >
-          <DailyCategorySalesChart />
+          <DailyCategorySales />
         </SectionCard>
       </Grid>
       <Grid size={{ xs: 12 }}>
@@ -36,7 +38,7 @@ const HomePage = (): ReactElement => {
           caption="In the selected date range"
           height={500}
         >
-          <DailyHourlySalesChart />
+          <DailyHourlySales />
         </SectionCard>
       </Grid>
       <Grid size={{ xs: 12 }}>

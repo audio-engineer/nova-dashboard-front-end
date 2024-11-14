@@ -1,12 +1,12 @@
 import Card from "@mui/material/Card";
-import Box from "@mui/material/Box";
 import CardContent from "@mui/material/CardContent";
 import Typography from "@mui/material/Typography";
 import type { PropsWithChildren, ReactElement } from "react";
+import { Stack } from "@mui/material";
 
 interface StatCardProps {
   readonly title: string;
-  readonly value?: number;
+  readonly value?: Readonly<ReactElement>;
   readonly caption?: string;
   readonly height?: number;
   readonly minHeight?: number;
@@ -32,9 +32,9 @@ const SectionCard = ({
         <Typography component="h3" variant="caption" gutterBottom>
           {caption}
         </Typography>
-        <Box height={height ?? undefined} minHeight={minHeight ?? undefined}>
+        <Stack height={height ?? undefined} minHeight={minHeight ?? undefined}>
           {children}
-        </Box>
+        </Stack>
       </CardContent>
     </Card>
   );
