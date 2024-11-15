@@ -48,8 +48,6 @@ const transformToHeatmapData = (
       },
     );
 
-    console.log(data);
-
     return {
       id: getLocalizedDate(day.date),
       data,
