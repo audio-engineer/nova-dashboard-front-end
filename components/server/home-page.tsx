@@ -6,12 +6,21 @@ import Calendar from "@/components/client/charts/calendar";
 import DailyCategorySales from "@/components/client/charts/daily-category-sales";
 import TotalDailySales from "@/components/client/charts/total-daily-sales";
 import TotalSalesNumber from "@/components/client/total-sales-number";
+import TotalDailyRevenue from "@/components/client/charts/total-daily-revenue";
+import TotalRevenueNumber from "@/components/client/total-revenue-number";
 
 const HomePage = (): ReactElement => {
   return (
     <>
       <Grid size={{ xs: 6 }}>
-        <SectionCard title="Overview">Some content</SectionCard>
+        <SectionCard
+          title="Total Revenue"
+          value={<TotalRevenueNumber />}
+          caption="In the selected date range"
+          height={100}
+        >
+          <TotalDailyRevenue />
+        </SectionCard>
       </Grid>
       <Grid size={{ xs: 6 }}>
         <SectionCard

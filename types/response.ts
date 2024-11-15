@@ -6,6 +6,7 @@ import type {
   OrderLine,
   Product,
   ProductWithCategoryProjection,
+  TotalDailyRevenueProjection,
   TotalDailySalesProjection,
 } from "@/types/entity";
 import type { Link, SelfLink } from "@/types/base";
@@ -42,6 +43,10 @@ export interface EmbeddedTotalDailySales {
   readonly tupleBackedMaps: readonly TotalDailySalesProjection[];
 }
 
+export interface EmbeddedTotalDailyRevenue {
+  readonly tupleBackedMaps: readonly TotalDailyRevenueProjection[];
+}
+
 export interface PageInfo {
   readonly size: number;
   readonly totalElements: number;
@@ -65,7 +70,8 @@ export interface PaginatedResponse<
     | EmbeddedOrderLines
     | EmbeddedDailyCategorySales
     | EmbeddedDailyHourlySales
-    | EmbeddedTotalDailySales,
+    | EmbeddedTotalDailySales
+    | EmbeddedTotalDailyRevenue,
 > {
   readonly _embedded: T;
   readonly _links: SelfLink & Links;

@@ -49,3 +49,7 @@ export interface DailyHourlySalesDto extends WithDate {
 export interface TotalDailySalesProjection extends WithDate {
   readonly totalSales: number;
 }
+
+export interface TotalDailyRevenueProjection extends WithDate {
+  readonly totalRevenue: number;
+}
