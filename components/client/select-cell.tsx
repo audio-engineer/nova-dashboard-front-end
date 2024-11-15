@@ -15,6 +15,9 @@ import FormControl from "@mui/material/FormControl";
 import { useCategories } from "@/hooks/use-categories";
 import { useNotifications } from "@toolpad/core/useNotifications";
 import { useMutationQueryOnErrorHandler } from "@/hooks/use-mutation-query-on-error-handler";
+import Spinner from "@/components/client/spinner";
+
+const emptyCategoriesArray = 0;
 
 interface SelectCellProps {
   readonly params: GridRenderCellParams<ProductRow>;
@@ -89,6 +92,10 @@ const SelectCell = ({ params }: SelectCellProps): ReactElement => {
 
     setValue(categoryId);
   };
+
+  if (emptyCategoriesArray === categories.length) {
+    return <Spinner />;
+  }
 
   return (
     <FormControl size="small">

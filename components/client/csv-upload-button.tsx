@@ -1,6 +1,5 @@
 "use client";
 
-import Button from "@mui/material/Button";
 import type { ChangeEvent, PropsWithChildren, ReactElement } from "react";
 import { useRef, useState } from "react";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
@@ -10,6 +9,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { client } from "@/axios";
 import { useNotifications } from "@toolpad/core/useNotifications";
 import { useMutationQueryOnErrorHandler } from "@/hooks/use-mutation-query-on-error-handler";
+import LoadingButton from "@mui/lab/LoadingButton";
 
 type AllowedFileNamePrefix = "orders" | "orderlines";
 
@@ -165,12 +165,12 @@ const CsvUploadButton = ({
   };
 
   return (
-    <Button
+    <LoadingButton
       component="label"
       role={undefined}
       tabIndex={-1}
       startIcon={StartIcon(isLoading)}
-      disabled={isLoading}
+      loading={isLoading}
     >
       {children}
       <VisuallyHiddenInput
@@ -178,7 +178,7 @@ const CsvUploadButton = ({
         onChange={handleInputChange}
         ref={fileInputRef}
       />
-    </Button>
+    </LoadingButton>
   );
 };
 

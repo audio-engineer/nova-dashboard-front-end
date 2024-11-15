@@ -12,7 +12,7 @@ const SettingsPage = (): ReactElement => {
     <>
       <Grid size={{ xs: 12 }}>
         <SectionCard title={"Import"}>
-          <ButtonGroup variant="contained">
+          <ButtonGroup variant="contained" sx={{ width: "fit-content" }}>
             <CsvUploadButton
               endpointPath={"/api/orders"}
               allowedFileNamePrefix={"orders"}
